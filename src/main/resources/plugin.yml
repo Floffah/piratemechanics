@@ -1,0 +1,24 @@
+name: PirateMechanics
+version: '${project.version}'
+main: dev.floffah.plugin.piratemechanics.PirateMechanics
+api-version: 1.18
+authors: [ Floffah ]
+description: 1.18 plugin that adds sea of thieves inspired mechanics to vanilla minecraft
+website: https://github.com/Floffah/piratemechanics
+commands:
+  piratemechanics:
+    description: Admin commands for pirate mechanics
+    aliases:
+      - pm
+permissions:
+  pm.*:
+    description: Get all permissions in pirate mechanics
+    default: false
+    children:
+      pm.commands.*:
+        default: false
+        description: Get access to all commands in pirate mechanics
+        children:
+          pm.commands.piratemechanics:
+            description: Get access to the /piratemechanics command
+            default: false
