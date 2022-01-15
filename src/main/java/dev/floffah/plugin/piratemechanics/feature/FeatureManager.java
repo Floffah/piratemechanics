@@ -1,12 +1,11 @@
 package dev.floffah.plugin.piratemechanics.feature;
 
 import dev.floffah.plugin.piratemechanics.PirateMechanics;
-import org.reflections.Reflections;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import org.reflections.Reflections;
 
 public class FeatureManager {
 
@@ -30,13 +29,16 @@ public class FeatureManager {
         for (Class<?> feature : features) {
             if (BaseFeature.class.isAssignableFrom(feature)) {
                 Class<? extends BaseFeature> validFeature = (Class<? extends BaseFeature>) feature;
-                Feature featureAnnotation = validFeature.getAnnotation(Feature.class);
+                Feature featureAnnotation = validFeature.getAnnotation(
+                    Feature.class
+                );
 
                 BaseFeature constructedFeature = validFeature
                     .getConstructor()
                     .newInstance();
                 constructedFeature.features = this;
                 constructedFeature.onLoad();
+                constructedFeature.name = featureAnnotation.name();
 
                 boolean shouldEnable = constructedFeature.shouldEnable.test(
                     this.plugin
@@ -46,17 +48,24 @@ public class FeatureManager {
                     constructedFeature.onEnable();
                 }
                 this.features.add(constructedFeature);
-                this.plugin.getLog4JLogger().info("Loaded feature " + featureAnnotation.name());
+                this.plugin.getLog4JLogger()
+                    .info("Loaded feature " + constructedFeature.name);
             }
         }
     }
 
     public void unloadFeatures() {
-        for (BaseFeature feature : this.features) {
+        // copies out array to prevent ConcurrentModificationExceptions
+        List<BaseFeature> toRemove = new ArrayList<>();
+        toRemove.addAll(this.features);
+
+        for (BaseFeature feature : toRemove) {
             if (feature.enabled) feature.onDisable();
             feature.onUnload();
             this.features.remove(feature);
         }
+
+        toRemove.clear(); // idk im paranoid
     }
 
     public void reloadFeatures() {

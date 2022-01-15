@@ -1,0 +1,11 @@
+{
+    "parent": "minecraft:block/barrel",
+    "overrides": [
+        {
+            "predicate": {
+                "custom_model_data": 5000
+            },
+            "model": "item/grog_barrel"
+        }
+    ]
+}

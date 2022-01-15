@@ -5,6 +5,7 @@ import java.util.function.Predicate;
 
 public class BaseFeature {
 
+    public String name;
     public Predicate<PirateMechanics> shouldEnable;
     public FeatureManager features;
     public boolean enabled;

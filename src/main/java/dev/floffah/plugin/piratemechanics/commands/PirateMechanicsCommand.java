@@ -1,9 +1,12 @@
 package dev.floffah.plugin.piratemechanics.commands;
 
 import dev.floffah.plugin.piratemechanics.PirateMechanics;
+import dev.floffah.plugin.piratemechanics.messages.CommandOutput;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.Command;
@@ -32,7 +35,21 @@ public class PirateMechanicsCommand implements CommandExecutor, TabCompleter {
             if (args[0].equals("reload")) {
                 try {
                     this.plugin.config.readConfig();
+                    sender.sendMessage(
+                        CommandOutput.defaultFormat(
+                            Component
+                                .text("Reloaded config")
+                                .color(NamedTextColor.GREEN)
+                        )
+                    );
                     this.plugin.features.reloadFeatures();
+                    sender.sendMessage(
+                        CommandOutput.defaultFormat(
+                            Component
+                                .text("Reloaded features without unloading. Use /pm hardreload to unload and load.")
+                                .color(NamedTextColor.GREEN)
+                        )
+                    );
                 } catch (IOException e) {
                     sender.sendMessage(
                         Component
@@ -44,8 +61,29 @@ public class PirateMechanicsCommand implements CommandExecutor, TabCompleter {
             } else if (args[0].equals("hardreload")) {
                 try {
                     this.plugin.config.readConfig();
+                    sender.sendMessage(
+                        CommandOutput.defaultFormat(
+                            Component
+                                .text("Reloaded config")
+                                .color(NamedTextColor.GREEN)
+                        )
+                    );
                     this.plugin.features.unloadFeatures();
                     this.plugin.features.loadFeatures();
+                    sender.sendMessage(
+                        CommandOutput.defaultFormat(
+                            Component
+                                .text("Reloaded features: ")
+                                .color(NamedTextColor.GREEN)
+                                .append(
+                                    Component.text(
+                                        this.plugin.features.features.stream()
+                                            .map(f -> f.name)
+                                            .collect(Collectors.joining(", "))
+                                    )
+                                )
+                        )
+                    );
                 } catch (
                     IOException
                     | InvocationTargetException

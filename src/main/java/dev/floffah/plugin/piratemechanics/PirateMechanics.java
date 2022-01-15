@@ -3,6 +3,7 @@ package dev.floffah.plugin.piratemechanics;
 import dev.floffah.plugin.piratemechanics.commands.PirateMechanicsCommand;
 import dev.floffah.plugin.piratemechanics.config.ConfigManager;
 import dev.floffah.plugin.piratemechanics.feature.FeatureManager;
+import dev.floffah.plugin.piratemechanics.namespace.NamespacedKeyMap;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -12,6 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 public final class PirateMechanics extends JavaPlugin {
     public ConfigManager config;
     public FeatureManager features;
+    public NamespacedKeyMap nkMap;
 
     @Override
     public void onEnable() {
@@ -23,6 +25,8 @@ public final class PirateMechanics extends JavaPlugin {
             this.getServer().getPluginManager().disablePlugin(this);
             return;
         }
+
+        this.nkMap = new NamespacedKeyMap(this);
 
         this.features = new FeatureManager(this);
         try {
@@ -43,6 +47,8 @@ public final class PirateMechanics extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        this.features.unloadFeatures();
+
         this.getLog4JLogger().info("Disabled PirateMechanics");
     }
 }
